@@ -4,11 +4,6 @@
   padding: 0;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   background-color: #000;
   color: #fff;
@@ -39,5 +34,6 @@ header {
 }
 
 canvas {
+  background: #000 url('./img/background-japan.jpg') no-repeat 0 0;
   border: 1px solid #fff;
 }

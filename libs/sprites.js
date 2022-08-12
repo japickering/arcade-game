@@ -1,57 +1,49 @@
 class Sprite {
-  constructor(x, y, width, height, imageSrc = '') {
+  constructor(name, x, y, width, height) {
+    this.name = name;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.image = new Image();
-    this.image.src = imageSrc;
-  }
-
-  draw() {
-    this.image.onload = () => {
-      ctx.drawImage(this.image, this.x, this.y, c.width, c.height);
-    };
   }
 }
 
 class Fighter extends Sprite {
-  constructor(x, y, width, height) {
+  constructor(name, x, y, width, height, imageSrc = '') {
     super();
+    this.name = name;
     this.x = x;
     this.y = y;
-    this.start = { x: x, y: y };
     this.width = width;
     this.height = height;
-    this.canvasWidth = 800;
+    this.start = { x: x, y: y };
     this.velocity = { x: 0, y: 0 };
-    this.jumping = false;
+    this.image = new Image();
+    this.image.src = imageSrc;
+    this.framesCurrent = 0;
+    this.framesMax = 10;
+    this.canvasWidth = 800;
     this.health = 100;
-    this.dead = false;
-    this.isAttacking = false;
-    this.offset = {
-      x: 10,
-      y: 10,
-    };
     this.attackBox = {
       x: this.x + this.width,
       y: this.y + this.height / 2,
       width: this.width,
       height: this.height,
     };
+    this.jumping = false;
+    this.dead = false;
+    this.isAttacking = false;
   }
 
   draw() {
-    ctx.clearRect(0, 0, c.width, c.height);
-    ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = 'blue';
-    ctx.fill();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'green';
+    ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 
   runLeft() {
     if (this.x > 0) {
-      this.velocity.x += 0.5;
+      this.velocity.x += 0.25;
       this.x -= this.velocity.x;
       this.draw();
     }
@@ -59,7 +51,7 @@ class Fighter extends Sprite {
 
   runRight() {
     if (this.x < this.canvasWidth) {
-      this.velocity.x += 0.5;
+      this.velocity.x += 0.25;
       this.x += this.velocity.x;
       this.draw();
     }
@@ -85,7 +77,8 @@ class Fighter extends Sprite {
     }
   }
 
-  //   switchAnimation() {}
+  // TODO:
+  switchAnimation() {}
   //   collidesWith() {}
   //   attack1() {}
   //   attack2() {}

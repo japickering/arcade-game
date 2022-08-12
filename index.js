@@ -1,19 +1,17 @@
-const c = document.querySelector('#canvas');
-c.width = 1024;
-c.height = 768;
-const ctx = c.getContext('2d');
-ctx.fillStyle = '#000';
-ctx.fillRect(0, 0, c.width, c.height);
+const canvas = document.querySelector('#canvas');
+canvas.width = 1024;
+canvas.height = 768;
+const ctx = canvas.getContext('2d');
 
 const gravity = 0.5;
 let lastKeyPressed;
 let isKeyPressed = false;
-// const bg = new Sprite(0, 0, canvas.width, canvas.height, './img/background-japan.jpg');
-// bg.draw();
 
-const player = new Fighter(100, 400, 200, 300);
-player.draw();
+const player = new Fighter('1up', 50, 390, 150, 300);
 console.log(player);
+
+// const enemy = new Fighter('enemy', 50, 390, 150, 300);
+// console.log(enemy);
 
 // controls
 window.addEventListener('keydown', function (event) {
@@ -26,10 +24,10 @@ window.addEventListener('keyup', function (event) {
   player.velocity.x = 0;
   isKeyPressed = false;
 
-  // jumping
+  // spacebar
   if (lastKeyPressed === ' ' && !player.jumping) {
     player.jumping = true;
-    player.velocity.y = -16;
+    player.velocity.y = -15;
   }
 });
 
@@ -38,10 +36,10 @@ function animate() {
   if (!player.dead) {
     if (isKeyPressed) {
       switch (lastKeyPressed) {
-        case 'ArrowLeft':
+        case 'a':
           player.runLeft();
           break;
-        case 'ArrowRight':
+        case 'd':
           player.runRight();
           break;
         default:
