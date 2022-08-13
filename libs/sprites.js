@@ -18,6 +18,7 @@ class Fighter extends Sprite {
     this.height = height;
     this.start = { x: x, y: y };
     this.velocity = { x: 0, y: 0 };
+    this.direction = this.name === '1up' ? 'right' : 'left';
     this.image = new Image();
     this.image.src = imageSrc;
     this.framesCurrent = 0;
@@ -36,16 +37,33 @@ class Fighter extends Sprite {
   }
 
   draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = this.name === '1up' ? 'blue' : '#d00';
     ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  update() {
+    // TODO: any adjustments needed
+    this.draw();
+  }
+
+  flyLeft() {
+    if (this.x > 0 && this.velocity.x <= 10) {
+      this.velocity.x += 0.25;
+      this.x -= this.velocity.x;
+    }
+  }
+
+  flyRight() {
+    if (this.x < this.canvasWidth && this.velocity.x <= 10) {
+      this.velocity.x += 0.2;
+      this.x += this.velocity.x;
+    }
   }
 
   runLeft() {
     if (this.x > 0) {
       this.velocity.x += 0.25;
       this.x -= this.velocity.x;
-      this.draw();
     }
   }
 
@@ -53,7 +71,6 @@ class Fighter extends Sprite {
     if (this.x < this.canvasWidth) {
       this.velocity.x += 0.25;
       this.x += this.velocity.x;
-      this.draw();
     }
   }
 
