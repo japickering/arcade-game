@@ -1,26 +1,28 @@
 class Sprite {
-  constructor(name, x, y, width, height) {
-    this.name = name;
+  constructor(image, x, y, w, h) {
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
+    this.width = w;
+    this.height = h;
+    this.image = image;
+  }
+
+  draw() {
+    ctx.drawImage(this.image, 0, 0, this.width, this.height);
   }
 }
 
-class Fighter extends Sprite {
-  constructor(name, x, y, width, height, imageSrc = '') {
-    super();
-    this.name = name;
+class Fighter {
+  constructor(image, x, y, w, h) {
+    this.image = image;
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
+    this.width = w;
+    this.height = h;
     this.start = { x: x, y: y };
     this.velocity = { x: 0, y: 0 };
-    this.direction = this.name === '1up' ? 'right' : 'left';
-    this.image = new Image();
-    this.image.src = imageSrc;
+    this.velocityMax = 5;
+    this.speed = 0.25;
     this.framesCurrent = 0;
     this.framesMax = 10;
     this.canvasWidth = 800;
@@ -31,45 +33,58 @@ class Fighter extends Sprite {
       width: this.width,
       height: this.height,
     };
+    this.attacking = false;
     this.jumping = false;
     this.dead = false;
-    this.isAttacking = false;
   }
 
   draw() {
-    ctx.fillStyle = this.name === '1up' ? 'blue' : '#d00';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    // ctx.drawImage(image, x, y, w, h, x2, y2, w2, h2)
+    if (player.attacking) {
+      ctx.drawImage(
+        this.image,
+        this.start.x + 180,
+        this.start.y,
+        this.width + 10,
+        this.height,
+        this.x + 20,
+        this.y + canvas.height - this.height - 80,
+        this.width,
+        this.height
+      );
+    } else {
+      ctx.drawImage(
+        this.image,
+        this.start.x,
+        this.start.y,
+        this.width,
+        this.height,
+        this.x,
+        this.y + canvas.height - this.height - 80,
+        this.width,
+        this.height
+      );
+    }
   }
 
   update() {
-    // TODO: any adjustments needed
     this.draw();
-  }
-
-  flyLeft() {
-    if (this.x > 0 && this.velocity.x <= 10) {
-      this.velocity.x += 0.25;
-      this.x -= this.velocity.x;
-    }
-  }
-
-  flyRight() {
-    if (this.x < this.canvasWidth && this.velocity.x <= 10) {
-      this.velocity.x += 0.2;
-      this.x += this.velocity.x;
-    }
   }
 
   runLeft() {
     if (this.x > 0) {
-      this.velocity.x += 0.25;
+      if (this.velocity.x <= this.velocityMax) {
+        this.velocity.x += this.speed;
+      }
       this.x -= this.velocity.x;
     }
   }
 
   runRight() {
     if (this.x < this.canvasWidth) {
-      this.velocity.x += 0.25;
+      if (this.velocity.x <= this.velocityMax) {
+        this.velocity.x += this.speed;
+      }
       this.x += this.velocity.x;
     }
   }
@@ -95,7 +110,7 @@ class Fighter extends Sprite {
   }
 
   // TODO:
-  switchAnimation() {}
+  //   switchAnimation() {}
   //   collidesWith() {}
   //   attack1() {}
   //   attack2() {}

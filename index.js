@@ -2,35 +2,45 @@ const canvas = document.querySelector('#canvas');
 canvas.width = 1024;
 canvas.height = 768;
 const ctx = canvas.getContext('2d');
+const tracer = document.querySelector('#header');
 const gravity = 0.5;
-
-// key controls
 const keys = {
-  leftPressed: false,
-  rightPressed: false,
-  jumpPressed: false,
+  left: false,
+  right: false,
+  jump: false,
+  attack: false,
 };
 let lastKeyPressed = null;
 let isKeyPressed = false;
 
-const player = new Fighter('1up', 50, 390, 150, 300);
+const img = new Image();
+img.src = './img/background-japan.jpg';
+const bg = new Sprite(img, 0, 0, canvas.width, canvas.height);
+
+const hero = new Image();
+hero.src = './img/sprites/idle.png';
+const player = new Fighter(hero, 0, 0, 180, 200);
 console.log(player);
 
-const enemy = new Fighter('enemy', 800, 390, 150, 300);
-console.log(enemy);
+// const target = new Image();
+// target.src = './img/sprites/idle.png';
+// const enemy = new Fighter(target, 0, 0, 180, 200);
+// console.log(enemy);
 
 window.addEventListener('keydown', function (event) {
   lastKeyPressed = event.key;
-  console.log(lastKeyPressed);
+  //   console.log(lastKeyPressed);
   isKeyPressed = true;
 
   switch (event.key) {
     case 'a':
-      keys.leftPressed = true;
+      keys.left = true;
     case 'd':
-      keys.rightPressed = true;
+      keys.right = true;
     case ' ':
-      keys.jumpPressed = true;
+      keys.jump = true;
+    case 'Enter':
+      keys.attack = true;
     default:
       break;
   }
@@ -42,11 +52,13 @@ window.addEventListener('keyup', function (event) {
 
   switch (event.key) {
     case 'a':
-      keys.leftPressed = false;
+      keys.left = false;
     case 'd':
-      keys.rightPressed = false;
+      keys.right = false;
     case ' ':
-      keys.jumpPressed = false;
+      keys.jump = false;
+    case 'Enter':
+      keys.attack = false;
     default:
       break;
   }
@@ -56,12 +68,19 @@ window.addEventListener('keyup', function (event) {
     player.jumping = true;
     player.velocity.y = -15;
   }
+
+  // fire button
+  if (lastKeyPressed === 'Enter') {
+    player.attacking = !player.attacking;
+  }
 });
 
 function animate() {
-  window.requestAnimationFrame(animate);
+  tracer.innerHTML = 'key pressed: ' + lastKeyPressed + ' | ';
+  tracer.innerHTML += '1UP x: ' + Math.floor(player.x) + ' ';
+  tracer.innerHTML += 'y: ' + Math.floor(player.y) + ' ';
 
-  // refresh canvas
+  requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (!player.dead) {
@@ -81,21 +100,21 @@ function animate() {
       if (isKeyPressed) {
         switch (lastKeyPressed) {
           case 'a':
-            player.flyLeft();
+            player.runLeft();
             break;
           case 'd':
-            player.flyRight();
+            player.runRight();
             break;
           default:
             break;
         }
       }
     } else {
-      // TODO: idle
     }
   }
+  bg.draw();
   player.update();
-  enemy.update();
+  //   enemy.update();
 }
 
 animate();
