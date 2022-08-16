@@ -13,9 +13,10 @@ class Sprite {
 }
 
 class Fighter {
-  constructor(image, x, y, w, h) {
+  constructor(name, image, x, y, w, h) {
+    this.name = name;
     this.image = image;
-    this.x = x;
+    this.x = this.name === 'hero' ? x : x + canvas.width - canvas.width / 3;
     this.y = y;
     this.width = w;
     this.height = h;
@@ -25,22 +26,22 @@ class Fighter {
     this.speed = 0.25;
     this.framesCurrent = 0;
     this.framesMax = 10;
-    this.canvasWidth = 800;
-    this.health = 100;
-    this.attackBox = {
-      x: this.x + this.width,
-      y: this.y + this.height / 2,
-      width: this.width,
-      height: this.height,
+    this.limit = {
+      x: 800,
+      y: canvas.height - this.height - 80,
     };
+    this.health = 100;
+    this.hitBox = {};
+    this.attackBox = {};
     this.attacking = false;
     this.jumping = false;
     this.dead = false;
   }
 
+  // TODO:
   draw() {
     // ctx.drawImage(image, x, y, w, h, x2, y2, w2, h2)
-    if (player.attacking) {
+    if (this.attacking) {
       ctx.drawImage(
         this.image,
         this.start.x + 180,
@@ -48,7 +49,7 @@ class Fighter {
         this.width + 10,
         this.height,
         this.x + 20,
-        this.y + canvas.height - this.height - 80,
+        this.y + this.limit.y,
         this.width,
         this.height
       );
@@ -60,7 +61,7 @@ class Fighter {
         this.width,
         this.height,
         this.x,
-        this.y + canvas.height - this.height - 80,
+        this.y + this.limit.y,
         this.width,
         this.height
       );
@@ -69,6 +70,47 @@ class Fighter {
 
   update() {
     this.draw();
+    this.drawHitBox();
+    if (this.attacking) {
+      this.drawAttackBox();
+    }
+  }
+
+  // TODO:
+  //   switchAnimation() {}
+  //   hitTest() {}
+
+  drawHitBox() {
+    this.hitBox = {
+      x: this.x,
+      y: this.y + this.limit.y,
+      width: this.width,
+      height: this.height,
+    };
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.width, this.hitBox.height);
+  }
+
+  drawAttackBox() {
+    this.attackBox = {
+      x: this.x + this.width - 60,
+      y: this.y + this.limit.y + 40,
+      width: Math.floor(this.width / 1.5),
+      height: Math.floor(this.height / 1.5),
+    };
+    ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+    ctx.fillRect(this.attackBox.x, this.attackBox.y, this.attackBox.width, this.attackBox.height);
+  }
+
+  takesHit(damage) {
+    this.health -= damage;
+    if (this.health <= 0) {
+      this.die();
+    }
+  }
+
+  die() {
+    this.dead = true;
   }
 
   runLeft() {
@@ -81,7 +123,7 @@ class Fighter {
   }
 
   runRight() {
-    if (this.x < this.canvasWidth) {
+    if (this.x < this.limit.x) {
       if (this.velocity.x <= this.velocityMax) {
         this.velocity.x += this.speed;
       }
@@ -108,12 +150,4 @@ class Fighter {
       this.jumping = false;
     }
   }
-
-  // TODO:
-  //   switchAnimation() {}
-  //   collidesWith() {}
-  //   attack1() {}
-  //   attack2() {}
-  //   takesHit() {}
-  //   die() {}
 }

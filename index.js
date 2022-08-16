@@ -2,7 +2,9 @@ const canvas = document.querySelector('#canvas');
 canvas.width = 1024;
 canvas.height = 768;
 const ctx = canvas.getContext('2d');
-const tracer = document.querySelector('#header');
+const trackPlayer = document.querySelector('#player');
+const trackEnemy = document.querySelector('#enemy');
+
 const gravity = 0.5;
 const keys = {
   left: false,
@@ -17,15 +19,15 @@ const img = new Image();
 img.src = './img/background-japan.jpg';
 const bg = new Sprite(img, 0, 0, canvas.width, canvas.height);
 
-const hero = new Image();
-hero.src = './img/sprites/idle.png';
-const player = new Fighter(hero, 0, 0, 180, 200);
+const heroImage = new Image();
+heroImage.src = './img/sprites/hero.png';
+const player = new Fighter('hero', heroImage, 0, 0, 180, 200);
 console.log(player);
 
-// const target = new Image();
-// target.src = './img/sprites/idle.png';
-// const enemy = new Fighter(target, 0, 0, 180, 200);
-// console.log(enemy);
+const targetImage = new Image();
+targetImage.src = './img/sprites/enemy.png';
+const enemy = new Fighter('enemy', targetImage, 0, 0, 180, 200);
+console.log(enemy);
 
 window.addEventListener('keydown', function (event) {
   lastKeyPressed = event.key;
@@ -75,11 +77,24 @@ window.addEventListener('keyup', function (event) {
   }
 });
 
-function animate() {
-  tracer.innerHTML = 'key pressed: ' + lastKeyPressed + ' | ';
-  tracer.innerHTML += '1UP x: ' + Math.floor(player.x) + ' ';
-  tracer.innerHTML += 'y: ' + Math.floor(player.y) + ' ';
+function trackSprites() {
+  trackPlayer.innerHTML = '1UP key pressed: ' + lastKeyPressed + ' | ';
+  trackPlayer.innerHTML += 'x: ' + Math.floor(player.x) + ' ';
+  trackPlayer.innerHTML += 'y: ' + Math.floor(player.y) + ' | ';
 
+  if (player.attacking) {
+    trackPlayer.innerHTML += 'attackBox x: ' + Math.floor(player.attackBox.x) + ' ';
+    trackPlayer.innerHTML += 'y: ' + Math.floor(player.attackBox.y) + ' ';
+  }
+
+  trackEnemy.innerHTML = 'Enemy x: ' + Math.floor(enemy.x) + ' ';
+  trackEnemy.innerHTML += 'y: ' + Math.floor(enemy.y) + ' | ';
+  trackEnemy.innerHTML += 'hitBox x: ' + Math.floor(enemy.hitBox.x) + ' ';
+  trackEnemy.innerHTML += 'y: ' + Math.floor(enemy.hitBox.y) + ' ';
+}
+
+function animate() {
+  trackSprites();
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -114,7 +129,7 @@ function animate() {
   }
   bg.draw();
   player.update();
-  //   enemy.update();
+  enemy.update();
 }
 
 animate();

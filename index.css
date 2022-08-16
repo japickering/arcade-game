@@ -33,13 +33,23 @@ img {
   top: 0;
 }
 
-header {
+.stats {
+  display: block;
   position: absolute;
-  width: 100%;
-  z-index: 2;
+  top: 10px;
+  left: 10px;
   font-size: 1rem;
   font-weight: normal;
   color: #fff;
+  z-index: 2;
+}
+
+.stats-enemy {
+  display: block;
+  position: absolute;
+  top: 30px;
+  left: 10px;
+  z-index: 3;
 }
 
 canvas {
