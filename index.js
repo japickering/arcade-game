@@ -2,9 +2,8 @@ const canvas = document.querySelector('#canvas');
 canvas.width = 1024;
 canvas.height = 768;
 const ctx = canvas.getContext('2d');
-const trackPlayer = document.querySelector('#player');
-const trackEnemy = document.querySelector('#enemy');
-
+const statusBar = document.querySelector('#status-bar');
+const statusEnemy = document.querySelector('#status-enemy');
 const gravity = 0.5;
 const keys = {
   left: false,
@@ -12,6 +11,7 @@ const keys = {
   jump: false,
   attack: false,
 };
+
 let lastKeyPressed = null;
 let isKeyPressed = false;
 
@@ -22,12 +22,10 @@ const bg = new Sprite(img, 0, 0, canvas.width, canvas.height);
 const heroImage = new Image();
 heroImage.src = './img/sprites/hero.png';
 const player = new Fighter('hero', heroImage, 0, 0, 180, 200);
-console.log(player);
 
 const targetImage = new Image();
 targetImage.src = './img/sprites/enemy.png';
 const enemy = new Fighter('enemy', targetImage, 0, 0, 180, 200);
-console.log(enemy);
 
 window.addEventListener('keydown', function (event) {
   lastKeyPressed = event.key;
@@ -49,7 +47,7 @@ window.addEventListener('keydown', function (event) {
 });
 
 window.addEventListener('keyup', function (event) {
-  player.velocity.x = 0;
+  player.vel.x = 0;
   isKeyPressed = false;
 
   switch (event.key) {
@@ -68,35 +66,51 @@ window.addEventListener('keyup', function (event) {
   // spacebar
   if (lastKeyPressed === ' ' && !player.jumping) {
     player.jumping = true;
-    player.velocity.y = -15;
+    player.vel.y = -15;
   }
 
   // fire button
   if (lastKeyPressed === 'Enter') {
-    player.attacking = !player.attacking;
+    if (!player.dead) {
+      player.attacking = true;
+      player.attack(enemy);
+
+      setTimeout(() => {
+        player.attacking = false;
+      }, 1000);
+    }
   }
 });
 
-function trackSprites() {
-  trackPlayer.innerHTML = '1UP key pressed: ' + lastKeyPressed + ' | ';
-  trackPlayer.innerHTML += 'x: ' + Math.floor(player.x) + ' ';
-  trackPlayer.innerHTML += 'y: ' + Math.floor(player.y) + ' | ';
-
+function log() {
+  statusBar.innerHTML = '1UP key: ' + lastKeyPressed + ' | ';
+  statusBar.innerHTML += ' HP: ' + player.health;
+  statusBar.innerHTML += ' x: ' + Math.floor(player.x);
+  statusBar.innerHTML += ' y: ' + Math.floor(player.y) + ' | ';
   if (player.attacking) {
-    trackPlayer.innerHTML += 'attackBox x: ' + Math.floor(player.attackBox.x) + ' ';
-    trackPlayer.innerHTML += 'y: ' + Math.floor(player.attackBox.y) + ' ';
+    statusBar.innerHTML += 'attackBox x: ' + Math.floor(player.attackBox.x) + ' ';
+    statusBar.innerHTML += 'y: ' + Math.floor(player.attackBox.y);
+  }
+  if (player.dead) {
+    statusBar.innerHTML += player.name + ' is dead!';
   }
 
-  trackEnemy.innerHTML = 'Enemy x: ' + Math.floor(enemy.x) + ' ';
-  trackEnemy.innerHTML += 'y: ' + Math.floor(enemy.y) + ' | ';
-  trackEnemy.innerHTML += 'hitBox x: ' + Math.floor(enemy.hitBox.x) + ' ';
-  trackEnemy.innerHTML += 'y: ' + Math.floor(enemy.hitBox.y) + ' ';
+  statusEnemy.innerHTML = 'Enemy';
+  statusEnemy.innerHTML += ' HP: ' + enemy.health;
+  statusEnemy.innerHTML += ' x: ' + Math.floor(enemy.x);
+  statusEnemy.innerHTML += ' y: ' + Math.floor(enemy.y) + ' | ';
+  statusEnemy.innerHTML += ' hitBox x: ' + Math.floor(enemy.hitBox.x);
+  statusEnemy.innerHTML += ' y: ' + Math.floor(enemy.hitBox.y) + ' ';
+  if (enemy.dead) {
+    statusEnemy.innerHTML += enemy.name + ' is dead!';
+  }
 }
 
 function animate() {
-  trackSprites();
+  log();
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  bg.draw();
 
   if (!player.dead) {
     if (isKeyPressed && !player.jumping) {
@@ -110,7 +124,8 @@ function animate() {
         default:
           break;
       }
-    } else if (player.jumping) {
+    }
+    if (player.jumping) {
       player.jump(gravity);
       if (isKeyPressed) {
         switch (lastKeyPressed) {
@@ -124,12 +139,14 @@ function animate() {
             break;
         }
       }
-    } else {
     }
+    player.update();
+    if (!enemy.dead) {
+      enemy.update();
+    }
+  } else {
+    console.log('GAME OVER!');
   }
-  bg.draw();
-  player.update();
-  enemy.update();
 }
 
 animate();

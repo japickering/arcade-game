@@ -16,14 +16,14 @@ class Fighter {
   constructor(name, image, x, y, w, h) {
     this.name = name;
     this.image = image;
-    this.x = this.name === 'hero' ? x : x + canvas.width - canvas.width / 3;
+    this.x = this.name === 'hero' ? x : x + 400;
     this.y = y;
     this.width = w;
     this.height = h;
     this.start = { x: x, y: y };
-    this.velocity = { x: 0, y: 0 };
-    this.velocityMax = 5;
-    this.speed = 0.25;
+    this.vel = { x: 0, y: 0 };
+    this.velMax = 5;
+    this.speed = 0.5;
     this.framesCurrent = 0;
     this.framesMax = 10;
     this.limit = {
@@ -71,15 +71,10 @@ class Fighter {
   update() {
     this.draw();
     this.drawHitBox();
-    if (this.attacking) {
-      this.drawAttackBox();
-    }
   }
 
   // TODO:
   //   switchAnimation() {}
-  //   hitTest() {}
-
   drawHitBox() {
     this.hitBox = {
       x: this.x,
@@ -87,7 +82,14 @@ class Fighter {
       width: this.width,
       height: this.height,
     };
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+
+    if (this.health > 50) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0)';
+    } else if (this.health > 25 && this.health <= 50) {
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+    } else {
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+    }
     ctx.fillRect(this.hitBox.x, this.hitBox.y, this.hitBox.width, this.hitBox.height);
   }
 
@@ -102,6 +104,24 @@ class Fighter {
     ctx.fillRect(this.attackBox.x, this.attackBox.y, this.attackBox.width, this.attackBox.height);
   }
 
+  hitTarget(target) {
+    if (
+      this.attackBox.x + this.attackBox.width >= target.hitBox.x &&
+      this.attackBox.y + this.attackBox.height >= target.hitBox.y
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  attack(target) {
+    this.drawAttackBox();
+    if (!target.dead && this.hitTarget(target)) {
+      target.takesHit(10);
+    }
+  }
+
   takesHit(damage) {
     this.health -= damage;
     if (this.health <= 0) {
@@ -110,42 +130,43 @@ class Fighter {
   }
 
   die() {
+    console.log(this.name + ' is dead');
     this.dead = true;
   }
 
   runLeft() {
     if (this.x > 0) {
-      if (this.velocity.x <= this.velocityMax) {
-        this.velocity.x += this.speed;
+      if (this.vel.x <= this.velMax) {
+        this.vel.x += this.speed;
       }
-      this.x -= this.velocity.x;
+      this.x -= this.vel.x;
     }
   }
 
   runRight() {
     if (this.x < this.limit.x) {
-      if (this.velocity.x <= this.velocityMax) {
-        this.velocity.x += this.speed;
+      if (this.vel.x <= this.velMax) {
+        this.vel.x += this.speed;
       }
-      this.x += this.velocity.x;
+      this.x += this.vel.x;
     }
   }
 
   jump(gravity) {
-    if (this.velocity.y < 0) {
-      this.velocity.y += gravity;
-      this.y += this.velocity.y;
+    if (this.vel.y < 0) {
+      this.vel.y += gravity;
+      this.y += this.vel.y;
     } else {
-      this.velocity.y += gravity;
+      this.vel.y += gravity;
       this.fall();
     }
   }
 
   fall() {
     if (this.y < this.start.y) {
-      this.y += this.velocity.y;
+      this.y += this.vel.y;
     } else {
-      this.velocity.y = 0;
+      this.vel.y = 0;
       this.y === this.start.y;
       this.jumping = false;
     }

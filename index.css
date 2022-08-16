@@ -7,15 +7,18 @@
 body {
   background-color: #000;
   color: #fff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-    'Helvetica Neue', sans-serif;
-  font-size: 18px;
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 20px;
 }
 
 img {
   display: block;
   width: 100%;
   height: auto;
+}
+
+canvas {
+  border: 1px solid #000;
 }
 
 .container {
@@ -33,25 +36,27 @@ img {
   top: 0;
 }
 
-.stats {
+.danger {
+  color: #c00;
+}
+
+.status-bar {
   display: block;
   position: absolute;
-  top: 10px;
+  bottom: 30px;
   left: 10px;
-  font-size: 1rem;
-  font-weight: normal;
-  color: #fff;
   z-index: 2;
 }
 
-.stats-enemy {
-  display: block;
-  position: absolute;
-  top: 30px;
+.status-bar.enemy {
+  bottom: 0px;
   left: 10px;
   z-index: 3;
 }
 
-canvas {
-  border: 1px solid #000;
+.status-bar span,
+.status-bar.enemy span {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #fff;
 }
