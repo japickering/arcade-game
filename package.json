@@ -1,0 +1,13 @@
+{
+  "name": "fighting-game",
+  "version": "0.0.1",
+  "private": true,
+  "author": "James Pickering",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "open index.html"
+  },
+  "keywords": [],
+  "license": "ISC"
+}
