@@ -5,60 +5,75 @@ const ctx = canvas.getContext('2d');
 const statusBar = document.querySelector('#status-bar');
 const statusEnemy = document.querySelector('#status-enemy');
 const gravity = 0.5;
-const keys = {
+
+const bg = new Sprite({
+  name: 'background',
+  imageSrc: './img/background-japan.jpg',
+  x: 0,
+  y: 0,
+  width: canvas.width,
+  height: canvas.height,
+});
+
+const player = new GameObject({
+  name: 'hero',
+  imageSrc: './img/sprites/hero.png',
+  x: 0,
+  y: 0,
+  width: 180,
+  height: 200,
+});
+
+const enemy = new GameObject({
+  name: 'enemy',
+  imageSrc: './img/sprites/enemy.png',
+  x: 0,
+  y: 0,
+  width: 180,
+  height: 200,
+});
+
+const controls = {
   left: false,
   right: false,
   jump: false,
   attack: false,
 };
-
 let lastKeyPressed = null;
 let isKeyPressed = false;
 
-const img = new Image();
-img.src = './img/background-japan.jpg';
-const bg = new Sprite(img, 0, 0, canvas.width, canvas.height);
-
-const heroImage = new Image();
-heroImage.src = './img/sprites/hero.png';
-const player = new Fighter('hero', heroImage, 0, 0, 180, 200);
-
-const targetImage = new Image();
-targetImage.src = './img/sprites/enemy.png';
-const enemy = new Fighter('enemy', targetImage, 0, 0, 180, 200);
-
-window.addEventListener('keydown', function (event) {
+document.addEventListener('keydown', function (event) {
   lastKeyPressed = event.key;
   //   console.log(lastKeyPressed);
   isKeyPressed = true;
 
   switch (event.key) {
     case 'a':
-      keys.left = true;
+      controls.left = true;
     case 'd':
-      keys.right = true;
+      controls.right = true;
     case ' ':
-      keys.jump = true;
+      controls.jump = true;
     case 'Enter':
-      keys.attack = true;
+      controls.attack = true;
     default:
       break;
   }
 });
 
-window.addEventListener('keyup', function (event) {
+document.addEventListener('keyup', function (event) {
   player.vel.x = 0;
   isKeyPressed = false;
 
   switch (event.key) {
     case 'a':
-      keys.left = false;
+      controls.left = false;
     case 'd':
-      keys.right = false;
+      controls.right = false;
     case ' ':
-      keys.jump = false;
+      controls.jump = false;
     case 'Enter':
-      keys.attack = false;
+      controls.attack = false;
     default:
       break;
   }

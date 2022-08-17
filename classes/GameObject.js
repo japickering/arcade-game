@@ -1,25 +1,14 @@
-class Sprite {
-  constructor(image, x, y, w, h) {
-    this.x = x;
-    this.y = y;
-    this.width = w;
-    this.height = h;
-    this.image = image;
-  }
-
-  draw() {
-    ctx.drawImage(this.image, 0, 0, this.width, this.height);
-  }
-}
-
-class Fighter {
-  constructor(name, image, x, y, w, h) {
-    this.name = name;
-    this.image = image;
-    this.x = this.name === 'hero' ? x : x + 400;
-    this.y = y;
-    this.width = w;
-    this.height = h;
+class GameObject extends Sprite {
+  constructor(config) {
+    super();
+    this.name = config.name;
+    this.x = config.name === 'hero' ? x : x + 400;
+    this.y = config.y;
+    this.width = config.width;
+    this.height = config.height;
+    this.image = new Image();
+    this.image.src = config.imageSrc;
+    this.loaded = false;
     this.start = { x: x, y: y };
     this.vel = { x: 0, y: 0 };
     this.velMax = 5;
@@ -38,33 +27,39 @@ class Fighter {
     this.dead = false;
   }
 
-  // TODO:
+  init() {
+    this.image.onload = () => {
+      this.loaded = true;
+    };
+  }
+
   draw() {
-    // ctx.drawImage(image, x, y, w, h, x2, y2, w2, h2)
-    if (this.attacking) {
-      ctx.drawImage(
-        this.image,
-        this.start.x + 180,
-        this.start.y,
-        this.width + 10,
-        this.height,
-        this.x + 20,
-        this.y + this.limit.y,
-        this.width,
-        this.height
-      );
-    } else {
-      ctx.drawImage(
-        this.image,
-        this.start.x,
-        this.start.y,
-        this.width,
-        this.height,
-        this.x,
-        this.y + this.limit.y,
-        this.width,
-        this.height
-      );
+    if (this.loaded) {
+      if (this.attacking) {
+        ctx.drawImage(
+          this.image,
+          this.start.x + 180,
+          this.start.y,
+          this.width + 10,
+          this.height,
+          this.x + 20,
+          this.y + this.limit.y,
+          this.width,
+          this.height
+        );
+      } else {
+        ctx.drawImage(
+          this.image,
+          this.start.x,
+          this.start.y,
+          this.width,
+          this.height,
+          this.x,
+          this.y + this.limit.y,
+          this.width,
+          this.height
+        );
+      }
     }
   }
 
