@@ -43,20 +43,32 @@ canvas {
 .status-bar {
   display: block;
   position: absolute;
-  bottom: 30px;
+  top: 0px;
   left: 10px;
   z-index: 2;
 }
 
 .status-bar.enemy {
-  bottom: 0px;
+  top: 30px;
   left: 10px;
   z-index: 3;
 }
 
 .status-bar span,
 .status-bar.enemy span {
+  color: #fff;
   font-size: 1rem;
   font-weight: normal;
-  color: #fff;
+}
+
+.alert {
+  display: block;
+  position: absolute;
+  top: 33%;
+  left: 25%;
+  z-index: 99;
+  color: gold;
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }

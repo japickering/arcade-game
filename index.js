@@ -2,10 +2,9 @@ const canvas = document.querySelector('#canvas');
 canvas.width = 1024;
 canvas.height = 768;
 const ctx = canvas.getContext('2d');
-const statusBar = document.querySelector('#status-bar');
-const statusEnemy = document.querySelector('#status-enemy');
 const gravity = 0.5;
 
+const utils = new Utils();
 const bg = new Sprite({
   name: 'background',
   imageSrc: './img/background-japan.jpg',
@@ -32,8 +31,7 @@ const enemy = new GameObject({
   width: 180,
   height: 200,
 });
-
-const controls = {
+const keys = {
   left: false,
   right: false,
   jump: false,
@@ -44,18 +42,17 @@ let isKeyPressed = false;
 
 document.addEventListener('keydown', function (event) {
   lastKeyPressed = event.key;
-  //   console.log(lastKeyPressed);
   isKeyPressed = true;
 
   switch (event.key) {
-    case 'a':
-      controls.left = true;
-    case 'd':
-      controls.right = true;
+    case 'arrowLeft':
+      keys.left = true;
+    case 'arrowRight':
+      keys.right = true;
     case ' ':
-      controls.jump = true;
+      keys.jump = true;
     case 'Enter':
-      controls.attack = true;
+      keys.attack = true;
     default:
       break;
   }
@@ -66,14 +63,14 @@ document.addEventListener('keyup', function (event) {
   isKeyPressed = false;
 
   switch (event.key) {
-    case 'a':
-      controls.left = false;
-    case 'd':
-      controls.right = false;
+    case 'arrowLeft':
+      keys.left = false;
+    case 'arrowRight':
+      keys.right = false;
     case ' ':
-      controls.jump = false;
+      keys.jump = false;
     case 'Enter':
-      controls.attack = false;
+      keys.attack = false;
     default:
       break;
   }
@@ -97,35 +94,11 @@ document.addEventListener('keyup', function (event) {
   }
 });
 
-function log() {
-  statusBar.innerHTML = '1UP key: ' + lastKeyPressed + ' | ';
-  statusBar.innerHTML += ' HP: ' + player.health;
-  statusBar.innerHTML += ' x: ' + Math.floor(player.x);
-  statusBar.innerHTML += ' y: ' + Math.floor(player.y) + ' | ';
-  if (player.attacking) {
-    statusBar.innerHTML += 'attackBox x: ' + Math.floor(player.attackBox.x) + ' ';
-    statusBar.innerHTML += 'y: ' + Math.floor(player.attackBox.y);
-  }
-  if (player.dead) {
-    statusBar.innerHTML += player.name + ' is dead!';
-  }
-
-  statusEnemy.innerHTML = 'Enemy';
-  statusEnemy.innerHTML += ' HP: ' + enemy.health;
-  statusEnemy.innerHTML += ' x: ' + Math.floor(enemy.x);
-  statusEnemy.innerHTML += ' y: ' + Math.floor(enemy.y) + ' | ';
-  statusEnemy.innerHTML += ' hitBox x: ' + Math.floor(enemy.hitBox.x);
-  statusEnemy.innerHTML += ' y: ' + Math.floor(enemy.hitBox.y) + ' ';
-  if (enemy.dead) {
-    statusEnemy.innerHTML += enemy.name + ' is dead!';
-  }
-}
-
 function animate() {
-  log();
+  utils.trace(lastKeyPressed, player, enemy);
   requestAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  bg.draw();
+  bg.update();
 
   if (!player.dead) {
     if (isKeyPressed && !player.jumping) {
@@ -158,9 +131,11 @@ function animate() {
     player.update();
     if (!enemy.dead) {
       enemy.update();
+    } else {
+      utils.gameAlert('YOU WIN!');
     }
   } else {
-    console.log('GAME OVER!');
+    utils.gameAlert('GAME OVER!');
   }
 }
 

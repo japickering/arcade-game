@@ -1,15 +1,7 @@
 class GameObject extends Sprite {
   constructor(config) {
-    super();
-    this.name = config.name;
-    this.x = config.name === 'hero' ? x : x + 400;
-    this.y = config.y;
-    this.width = config.width;
-    this.height = config.height;
-    this.image = new Image();
-    this.image.src = config.imageSrc;
-    this.loaded = false;
-    this.start = { x: x, y: y };
+    super(config);
+    this.start = { x: config.x, y: config.y };
     this.vel = { x: 0, y: 0 };
     this.velMax = 5;
     this.speed = 0.5;
@@ -19,18 +11,23 @@ class GameObject extends Sprite {
       x: 800,
       y: canvas.height - this.height - 80,
     };
-    this.health = 100;
+    this.hp = 100;
     this.hitBox = {};
     this.attackBox = {};
+    this.attackDamage = 10;
     this.attacking = false;
     this.jumping = false;
     this.dead = false;
+    console.log(this);
   }
 
   init() {
     this.image.onload = () => {
       this.loaded = true;
     };
+    if (this.name === 'enemy') {
+      this.x = canvas.width - this.width;
+    }
   }
 
   draw() {
@@ -78,9 +75,9 @@ class GameObject extends Sprite {
       height: this.height,
     };
 
-    if (this.health > 50) {
+    if (this.hp > 50) {
       ctx.fillStyle = 'rgba(255, 255, 255, 0)';
-    } else if (this.health > 25 && this.health <= 50) {
+    } else if (this.hp > 25 && this.hp <= 50) {
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
     } else {
       ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
@@ -113,13 +110,13 @@ class GameObject extends Sprite {
   attack(target) {
     this.drawAttackBox();
     if (!target.dead && this.hitTarget(target)) {
-      target.takesHit(10);
+      target.takesHit(this.attackDamage);
     }
   }
 
   takesHit(damage) {
-    this.health -= damage;
-    if (this.health <= 0) {
+    this.hp -= damage;
+    if (this.hp <= 0) {
       this.die();
     }
   }
